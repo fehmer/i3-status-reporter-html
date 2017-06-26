@@ -1,0 +1,114 @@
+<html id="html">
+<head>
+  <style>
+
+    body{
+      background: {{color.normalBackground}};
+      padding:0;
+      margin:0;
+      padding-top: 2em;
+      color: {{color.normalText}};
+      font-family: {{font.family}}, serif;
+      font-size: {{font.size}};
+      border: 1px solid {{color.highlightBackground}};
+    }
+
+    a{
+      color: {{color.normalText}};
+      text-decoration: none;
+    }
+
+    a:hover, a:focus, a:active{
+      text-decoration: underline;
+    }
+
+    header{
+      background: {{color.highlightBackground}};
+      padding: 10px;
+      color: {{color.highlightText}};
+      display: block;
+      font-weight: bold;
+      height: 1em;
+      width: 100%;
+      position: fixed;
+      top: 0px;
+    }
+
+    header a {
+      float:right;
+      margin-right: 20px;
+      text-decoration: none;
+      color: {{color.highlightText}};
+    }
+
+    content{
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    content ul{
+      list-style: none;
+      padding-left: 0px;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+
+    content ul li{
+      padding: 5px 0px;
+    }
+
+    {{userStyle}}
+
+
+  </style>
+
+
+
+
+
+
+</head>
+<body id="body">
+  <header>{{header}}: <a id="close" href=""  onclick="doClose();"></a></header>
+
+  <content id="content">
+    {{{content}}}
+  </content>
+
+
+</body>
+
+<script>
+  var active = false;
+  const {ipcRenderer} = require('electron')
+
+  function loadUrl(url){
+    ipcRenderer.send('load-url', url);
+  }
+
+  function doClose(){
+    ipcRenderer.send('close-message');
+  }
+
+  function keepOpen(){
+    if(!active)
+      ipcRenderer.send('active-message');
+    active = true;
+    return false;
+  }
+
+  function openLink(data){
+    if(data.target.href) loadUrl(data.target.href);
+    return false;
+  };
+
+  document.getElementById('body').onmouseover = keepOpen;
+  document.getElementById('content').onclick= openLink;
+
+  var body = document.getElementById('html');
+  ipcRenderer.send('resize-message', {width: body.offsetWidth, height: body.offsetHeight});
+
+
+</script>
+
+</html>
