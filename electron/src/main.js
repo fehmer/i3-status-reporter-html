@@ -1,9 +1,9 @@
 "use strict";
-import { getWindowPosition } from './displayHelper';
-import { execFile } from 'child_process';
-import { app, BrowserWindow, ipcMain } from 'electron';
-import electron from 'electron';
-
+const getWindowPosition = require('./displayHelper.js');
+const { execFile } = require( 'child_process');
+const { app, BrowserWindow, ipcMain } = require( 'electron');
+const electron = require( 'electron');
+const path = require('path');
 
 const args = JSON.parse(process.argv[3]);
 args.window = args.window || {
@@ -17,12 +17,38 @@ let mainWindow;
 let window;
 
 
-app.setName('i3-status-reporter');
+app.setName('i3-status-reporter-test');
+
 app.on('window-all-closed', function() {
     app.quit();
 });
 
 app.on('ready', () => {
+    //load a url in the default browser
+    ipcMain.on('load-url', (event, url) => {
+        execFile(browser, [url]);
+        event.returnValue = 'ok';
+    });
+
+    ipcMain.on('close-message', (event) => {
+        mainWindow.close();
+    });
+
+    ipcMain.on('active-message', (event) => {
+        clearTimeout(autoClose);
+        return true;
+    });
+
+    ipcMain.on('resize-message', (event, dim) => {
+        const display = electron.screen.getDisplayNearestPoint(window);
+        const maxHeight = display.size.height - window.barHeight;
+
+        window.height = dim.height < maxHeight ? dim.height : maxHeight;
+        window = getWindowPosition(window, display);
+        mainWindow.setBounds(window)
+        return true;
+    });
+
     const primaryDisplay = electron.screen.getDisplayNearestPoint(electron.screen.getCursorScreenPoint());
 
     window = {
@@ -41,11 +67,12 @@ app.on('ready', () => {
     window = Object.assign(window,
         {
             alwaysOnTop: args.alwaysOnTop || true,
-            frame: false,
+            frame: true,
             show: false,
             center: false,
             webPreferences: {
-                devTools: true
+                devTools: true,
+                preload: path.join(__dirname, 'preload.js')
             }
         });
 
@@ -68,27 +95,3 @@ app.on('ready', () => {
     });
 });
 
-//load a url in the default browser
-ipcMain.on('load-url', (event, url) => {
-    execFile(browser, [url]);
-    event.returnValue = 'ok';
-});
-
-ipcMain.on('close-message', (event) => {
-    mainWindow.close();
-});
-
-ipcMain.on('active-message', (event) => {
-    clearTimeout(autoClose);
-    return true;
-});
-
-ipcMain.on('resize-message', (event, dim) => {
-    const display = electron.screen.getDisplayNearestPoint(window);
-    const maxHeight = display.size.height - window.barHeight;
-
-    window.height = dim.height < maxHeight ? dim.height : maxHeight;
-    window = getWindowPosition(window, display);
-    mainWindow.setBounds(window)
-    return true;
-});

@@ -2,6 +2,7 @@ import electron from 'electron';
 import { execFile } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import Handlebars from 'handlebars';
 import tmp from 'tmp';
 
@@ -30,6 +31,8 @@ export default class HtmlReporter {
             debug=false //
         } = {}) {
 
+        const __dirname = fileURLToPath(import.meta.url);
+
         tmp.setGracefulCleanup();
 
         // set fields, apply default parameter
@@ -47,8 +50,8 @@ export default class HtmlReporter {
             },
             colors: Object.assign({}, defaultParameter.colors, colors),
             font: Object.assign({}, defaultParameter.font, font),
-            main: resolve(__dirname, '../lib/main.js'),
-            template: Handlebars.compile(readFileSync(resolve(__dirname, '../content/main.html')).toString('utf8'))
+            main: resolve(__dirname, '../../electron/src/main.js'),
+            template: Handlebars.compile(readFileSync(resolve(__dirname, '../../content/main.html')).toString('utf8'))
         });
     }
 
@@ -64,7 +67,7 @@ export default class HtmlReporter {
 
         //render template to temp file
         const rendered = this.template(context);
-        const file = tmp.tmpNameSync();
+        const file = tmp.tmpNameSync()+'.html';
         writeFileSync(file, rendered);
 
         //copy settings, apply target coordinates

@@ -1,11 +1,10 @@
-
-var HtmlReporter = require('./../lib/').default;
+import HtmlReporter from './../src/index.js';
 
 var options = {
     timeout: 5,
-    height: 10,
+    height: 400,
     width: 1200,
-    barHeight: 28,
+    barHeight: 40,
     margin: 0 ,
     colors: {
         normalText: '#FFFFFF',

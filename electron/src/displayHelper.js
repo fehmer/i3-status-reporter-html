@@ -1,8 +1,5 @@
-'use strict';
-/**
- *
- */
-export function getWindowPosition(window, display) {
+
+function getWindowPosition(window, display) {
     const result = Object.assign({}, window);
     const area = display.workArea;
     const margin = window.margin || 0;
@@ -23,3 +20,4 @@ export function getWindowPosition(window, display) {
 
 }
 
+module.exports = getWindowPosition;

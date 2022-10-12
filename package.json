@@ -1,24 +1,21 @@
 {
   "name": "i3-status-reporter-html",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Reporter for i3-status using html",
-  "main": "lib/index.js",
+  "main": "src/index.js",
+  "type": "module",
   "url": "https://github.com/fehmer/i3-status-reporter-html/issues",
   "scripts": {
-    "prepublish": "npm run compile",
-    "compile": "babel src/ -d lib -s",
-    "test": "npm run compile && node_modules/mocha/bin/mocha --compilers js:babel-register test --recursive --reporter gitlablist-mocha",
-    "watch": "npm run compile && (babel -w src/ -d lib -s &) && node_modules/mocha/bin/mocha --compilers js:babel-register test --recursive  --reporter min --watch",
-    "cover": "npm run compile && istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register --colors --reporter dot test/ --recursive"
+    "test": "mocha test --recursive",
+    "watch": "mocha test --recursive --reporter min --watch --parallel",
+    "coverage": "c8 npm run test"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/fehmer/i3-status-reporter-html.git"
   },
-  "babel": {
-    "presets": [
-      "latest"
-    ]
+  "engines": {
+    "node": ">=14.0.0"
   },
   "keywords": [
     "i3",
@@ -30,18 +27,13 @@
   "author": "Christian Fehmer",
   "license": "MIT",
   "dependencies": {
-    "electron": "^1.6.11",
-    "handlebars": "^4.0.10",
-    "tmp": "^0.0.31"
+    "electron": "^21.1.0",
+    "handlebars": "^4.7.7",
+    "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-latest": "^6.24.1",
-    "babel-register": "^6.24.1",
-    "chai": "^4.0.2",
-    "codacy-coverage": "^2.0.2",
-    "gitlablist-mocha": "^1.0.2",
-    "istanbul": "^1.1.0-alpha.1",
-    "mocha": "^3.4.2"
+    "c8": "^7.12.0",
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
   }
 }

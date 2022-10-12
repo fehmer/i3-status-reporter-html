@@ -1,5 +1,7 @@
 <html id="html">
 <head>
+  <meta charset="UTF-8">
+
   <style>
 
     body{
@@ -61,12 +63,6 @@
 
 
   </style>
-
-
-
-
-
-
 </head>
 <body id="body">
   <header>{{header}}: <a id="close" href=""  onclick="doClose();"></a></header>
@@ -75,40 +71,36 @@
     {{{content}}}
   </content>
 
+  <script>
+    var active = false;
 
+    function loadUrl(url){
+      window.electronAPI.loadUrl(url);
+    }
+
+    function doClose(){
+      window.electronAPI.doClose();
+    }
+
+    function keepOpen(){
+      if(!active)
+        window.electronAPI.keepOpen();
+      active = true;
+      return false;
+    }
+
+    function openLink(data){
+      if(data.target.href) loadUrl(data.target.href);
+      return false;
+    };
+
+    document.getElementById('body').onmouseover = keepOpen;
+    document.getElementById('content').onclick= openLink;
+
+    var body = document.getElementById('html');
+    window.electronAPI.resize({width: body.offsetWidth, height: body.offsetHeight});
+
+  </script>
 </body>
-
-<script>
-  var active = false;
-  const {ipcRenderer} = require('electron')
-
-  function loadUrl(url){
-    ipcRenderer.send('load-url', url);
-  }
-
-  function doClose(){
-    ipcRenderer.send('close-message');
-  }
-
-  function keepOpen(){
-    if(!active)
-      ipcRenderer.send('active-message');
-    active = true;
-    return false;
-  }
-
-  function openLink(data){
-    if(data.target.href) loadUrl(data.target.href);
-    return false;
-  };
-
-  document.getElementById('body').onmouseover = keepOpen;
-  document.getElementById('content').onclick= openLink;
-
-  var body = document.getElementById('html');
-  ipcRenderer.send('resize-message', {width: body.offsetWidth, height: body.offsetHeight});
-
-
-</script>
 
 </html>
