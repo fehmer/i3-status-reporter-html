@@ -3,14 +3,10 @@
 The i3-status-reporter-html uses [electron](https://electron.atom.io/) to display additional information from modules.
 
 [![npm version](https://img.shields.io/npm/v/i3-status-reporter-html.svg?style=flat-square)](https://www.npmjs.com/package/i3-status-reporter-html)
-[![Dependency Status](https://img.shields.io/gemnasium/fehmer/i3-status-reporter-html.svg?style=flat-square)](https://gemnasium.com/github.com/fehmer/i3-status-reporter-html)
-[![Build Status](https://img.shields.io/travis/fehmer/i3-status-reporter-html.svg?style=flat-square)](https://travis-ci.org/fehmer/i3-status-reporter-html)
-[![Codacy Badge](https://img.shields.io/codacy/grade/0aba07b9f1434e8fa64f850a32b01790.svg?style=flat-square)](https://www.codacy.com/app/fehmer/i3-status-reporter-html?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fehmer/i3-status-reporter-html&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://img.shields.io/codacy/coverage/0aba07b9f1434e8fa64f850a32b01790.svg?style=flat-square)](https://www.codacy.com/app/fehmer/i3-status-reporter-html?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fehmer/i3-status-reporter-html&amp;utm_campaign=Badge_Coverage)
-
+[![Node.js CI](https://github.com/fehmer/i3-status-reporter-html/actions/workflows/node.js.yml/badge.svg)](https://github.com/fehmer/i3-status-reporter-html/actions/workflows/node.js.yml)
 ## Table of content
 
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC autolink="true" -->
 
 - [Installation](#installation)
 - [Configuration](#configuration)
@@ -23,7 +19,6 @@ The i3-status-reporter-html uses [electron](https://electron.atom.io/) to displa
   - [Colors](#colors)
 
 <!-- /MarkdownTOC -->
-
 
 ## Installation
 

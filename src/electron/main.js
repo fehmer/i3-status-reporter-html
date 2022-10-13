@@ -1,9 +1,9 @@
 "use strict";
-import { getWindowPosition } from './displayHelper';
-import { execFile } from 'child_process';
-import { app, BrowserWindow, ipcMain } from 'electron';
-import electron from 'electron';
-
+const getWindowPosition = require('./displayHelper.js');
+const { execFile } = require( 'child_process');
+const { app, BrowserWindow, ipcMain } = require( 'electron');
+const electron = require( 'electron');
+const path = require('path');
 
 const args = JSON.parse(process.argv[3]);
 args.window = args.window || {
@@ -15,14 +15,41 @@ const browser = args.browser || 'google-chrome';
 let autoClose;
 let mainWindow;
 let window;
+let autoCloseTimeout;
 
 
-app.setName('i3-status-reporter');
+app.setName('i3-status-reporter-test');
+
 app.on('window-all-closed', function() {
     app.quit();
 });
 
 app.on('ready', () => {
+    //load a url in the default browser
+    ipcMain.on('load-url', (event, url) => {
+        execFile(browser, [url]);
+        event.returnValue = 'ok';
+    });
+
+    ipcMain.on('close-message', (event) => {
+        mainWindow.close();
+    });
+
+    ipcMain.on('active-message', (event, enabled) => {
+        enableAutoClose(!enabled);
+        return true;
+    });
+
+    ipcMain.on('resize-message', (event, dim) => {
+        const display = electron.screen.getDisplayNearestPoint(window);
+        const maxHeight = display.size.height - window.barHeight;
+
+        window.height = dim.height < maxHeight ? dim.height : maxHeight;
+        window = getWindowPosition(window, display);
+        mainWindow.setBounds(window)
+        return true;
+    });
+
     const primaryDisplay = electron.screen.getDisplayNearestPoint(electron.screen.getCursorScreenPoint());
 
     window = {
@@ -45,9 +72,12 @@ app.on('ready', () => {
             show: false,
             center: false,
             webPreferences: {
-                devTools: true
+                devTools: true,
+                preload: path.join(__dirname, 'preload.js')
             }
         });
+
+    autoCloseTimeout = args.timeout * 1000;
 
     mainWindow = new BrowserWindow(window);
     mainWindow.setMenu(null);
@@ -57,38 +87,21 @@ app.on('ready', () => {
         mainWindow.showInactive();
 
         //set autoClose if args.timeput is set
-        if (args.timeout) {
-            autoClose = setTimeout(() => {
-                mainWindow.close();
-            }, args.timeout * 1000);
-        }
+        enableAutoClose(true);
 
         //open dev tools
         if (args.debug) mainWindow.webContents.openDevTools();
     });
 });
 
-//load a url in the default browser
-ipcMain.on('load-url', (event, url) => {
-    execFile(browser, [url]);
-    event.returnValue = 'ok';
-});
-
-ipcMain.on('close-message', (event) => {
-    mainWindow.close();
-});
-
-ipcMain.on('active-message', (event) => {
-    clearTimeout(autoClose);
-    return true;
-});
-
-ipcMain.on('resize-message', (event, dim) => {
-    const display = electron.screen.getDisplayNearestPoint(window);
-    const maxHeight = display.size.height - window.barHeight;
-
-    window.height = dim.height < maxHeight ? dim.height : maxHeight;
-    window = getWindowPosition(window, display);
-    mainWindow.setBounds(window)
-    return true;
-});
+function enableAutoClose(enabled) {
+    if(enabled){
+        if (autoCloseTimeout) {
+            autoClose = setTimeout(() => {
+                mainWindow.close();
+            }, autoCloseTimeout);
+        }
+    } else {
+        clearTimeout(autoClose);
+    }
+}

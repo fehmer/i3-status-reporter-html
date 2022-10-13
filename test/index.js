@@ -1,7 +1,7 @@
 'use strict';
 
 import { expect } from 'chai';
-import HtmlReporter from './../lib/index';
+import HtmlReporter from './../src/index.js';
 
 describe('HtmlReporter', () => {
 

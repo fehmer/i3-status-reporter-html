@@ -1,7 +1,7 @@
 'use strict';
 
 import { expect } from 'chai';
-import { getWindowPosition } from './../lib/displayHelper';
+import getWindowPosition from './../src/electron/displayHelper.js';
 
 describe('DisplayHelper', function() {
 
