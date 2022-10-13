@@ -50,7 +50,7 @@ export default class HtmlReporter {
             },
             colors: Object.assign({}, defaultParameter.colors, colors),
             font: Object.assign({}, defaultParameter.font, font),
-            main: resolve(__dirname, '../../electron/src/main.js'),
+            main: resolve(__dirname, '../electron/main.js'),
             template: Handlebars.compile(readFileSync(resolve(__dirname, '../../content/main.html')).toString('utf8'))
         });
     }

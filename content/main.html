@@ -72,8 +72,6 @@
   </content>
 
   <script>
-    var active = false;
-
     function loadUrl(url){
       window.electronAPI.loadUrl(url);
     }
@@ -82,10 +80,8 @@
       window.electronAPI.doClose();
     }
 
-    function keepOpen(){
-      if(!active)
-        window.electronAPI.keepOpen();
-      active = true;
+    function keepOpen(enabled){
+      window.electronAPI.keepOpen(enabled);
       return false;
     }
 
@@ -94,8 +90,11 @@
       return false;
     };
 
-    document.getElementById('body').onmouseover = keepOpen;
+    var body = document.getElementById('body');
+    body.onmouseover = ()=>keepOpen(true);
+    body.onmouseleave = ()=>keepOpen(false);
     document.getElementById('content').onclick= openLink;
+
 
     var body = document.getElementById('html');
     window.electronAPI.resize({width: body.offsetWidth, height: body.offsetHeight});

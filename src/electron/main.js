@@ -15,6 +15,7 @@ const browser = args.browser || 'google-chrome';
 let autoClose;
 let mainWindow;
 let window;
+let autoCloseTimeout;
 
 
 app.setName('i3-status-reporter-test');
@@ -34,8 +35,8 @@ app.on('ready', () => {
         mainWindow.close();
     });
 
-    ipcMain.on('active-message', (event) => {
-        clearTimeout(autoClose);
+    ipcMain.on('active-message', (event, enabled) => {
+        enableAutoClose(!enabled);
         return true;
     });
 
@@ -67,7 +68,7 @@ app.on('ready', () => {
     window = Object.assign(window,
         {
             alwaysOnTop: args.alwaysOnTop || true,
-            frame: true,
+            frame: false,
             show: false,
             center: false,
             webPreferences: {
@@ -75,6 +76,8 @@ app.on('ready', () => {
                 preload: path.join(__dirname, 'preload.js')
             }
         });
+
+    autoCloseTimeout = args.timeout * 1000;
 
     mainWindow = new BrowserWindow(window);
     mainWindow.setMenu(null);
@@ -84,14 +87,21 @@ app.on('ready', () => {
         mainWindow.showInactive();
 
         //set autoClose if args.timeput is set
-        if (args.timeout) {
-            autoClose = setTimeout(() => {
-                mainWindow.close();
-            }, args.timeout * 1000);
-        }
+        enableAutoClose(true);
 
         //open dev tools
         if (args.debug) mainWindow.webContents.openDevTools();
     });
 });
 
+function enableAutoClose(enabled) {
+    if(enabled){
+        if (autoCloseTimeout) {
+            autoClose = setTimeout(() => {
+                mainWindow.close();
+            }, autoCloseTimeout);
+        }
+    } else {
+        clearTimeout(autoClose);
+    }
+}

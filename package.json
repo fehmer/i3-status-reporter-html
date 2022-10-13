@@ -27,7 +27,7 @@
   "author": "Christian Fehmer",
   "license": "MIT",
   "dependencies": {
-    "electron": "^21.1.0",
+    "electron": "^21.1.1",
     "handlebars": "^4.7.7",
     "tmp": "^0.2.1"
   },
